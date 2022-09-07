@@ -25,22 +25,31 @@ class markController extends Controller
         return redirect(route('user.private'))->with('message', 'Успешно!');
     }
     public function edit(Request $request){
-        $validateFields = $request->validate([
-            'name' => 'required',
-            'latitude' => 'numeric|required',
-            'longitude' => 'numeric|required'
-        ]);
-        $id = $request->input('id');
-        $name = $request->input('name');
-        $latitude = $request->input('latitude');
-        $longitude = $request->input('longitude');
-        DB::table('posts')->where('id', $id)->update(['name' => $name,'latitude' => $latitude, 'longitude' => $longitude]);
-        return redirect(route('user.private'))->with('message', 'Успешно!');
+        if(Auth::user()->id == $request->input('userid')){
+            $validateFields = $request->validate([
+                'name' => 'required',
+                'latitude' => 'numeric|required',
+                'longitude' => 'numeric|required'
+            ]);
+            $id = $request->input('id');
+            $name = $request->input('name');
+            $latitude = $request->input('latitude');
+            $longitude = $request->input('longitude');
+            DB::table('posts')->where('id', $id)->update(['name' => $name,'latitude' => $latitude, 'longitude' => $longitude]);
+            return redirect(route('user.private'))->with('message', 'Успешно!');
+        }else{
+            return back()->withErrors(['userid'=> 'Не удалось авторизироваться']);;
+        }
     }
     public function delete(Request $request){
-        $id = $request->input('id');
-        DB::delete('delete from public.posts where id = '.$id);
-        return back();
+        if(Auth::user()->id == $request->input('userid')){
+            $id = $request->input('id');
+            DB::delete('delete from public.posts where id = '.$id);
+            return back();
+        }else{
+            return back()->withErrors(['userid'=> 'Не удалось авторизироваться']);;
+        }
+
     }
     public function get(Request $request){
         $results = DB::select('select * from public.posts where userid = :id',['id' => Auth::user()->id]);

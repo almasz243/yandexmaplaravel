@@ -46,6 +46,7 @@ use Illuminate\Support\Facades\Auth;
                         <div onclick="link{{$result->id}}()" id="editable{{$result->id}}">{{$result->name}}: {{$result->latitude}}/{{$result->longitude}}</div>
                         <div class="input-group">
                             <input type="text" style="display:none" value="{{$result->id}}" name="id" class="form-control">
+                            <input type="text" style="display:none" value="{{$result->userid}}" name="userid">
                             <input type="text" style="display:none" value="{{$result->name}}" name="name" id="editName{{$result->id}}" class="form-control">
                             <input type="text" style="display:none" value="{{$result->latitude}}" name="latitude" id="editLatitude{{$result->id}}" class="form-control">
                             <input type="text" style="display:none" value="{{$result->longitude}}" name="longitude" id="editLongitude{{$result->id}}" class="form-control">
@@ -56,6 +57,7 @@ use Illuminate\Support\Facades\Auth;
                     <form action="{{route('user.delete')}}" method="GET">
                         @csrf
                         <input type="text" style="display:none" value="{{$result->id}}" name="id">
+                        <input type="text" style="display:none" value="{{$result->userid}}" name="userid">
                         <Button class="btn btn-outline-secondary">Удалить</Button>
                     </form>
                 @endforeach

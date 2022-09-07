@@ -43,7 +43,7 @@ Route::name('user.')->group(function (){
        return view('register');
     })->name('register');
     Route::post('/register', [\App\Http\Controllers\auth::class, 'save']);
-    Route::post('/posts',[\App\Http\Controllers\markController::class,'post'])->name('post');
-    Route::get('/edit', [\App\Http\Controllers\markController::class, 'edit'])->name('edit');
-    Route::get('/delete', [\App\Http\Controllers\markController::class,'delete'])->name('delete');
+    Route::post('/posts',[\App\Http\Controllers\markController::class,'post'])->name('post')->middleware('auth');
+    Route::get('/edit', [\App\Http\Controllers\markController::class, 'edit'])->name('edit')->middleware('auth');
+    Route::get('/delete', [\App\Http\Controllers\markController::class,'delete'])->name('delete')->middleware('auth');
 });
