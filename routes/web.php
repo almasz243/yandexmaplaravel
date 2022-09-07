@@ -23,10 +23,7 @@ Route::get('/', function () {
 Route::name('user.')->group(function (){
     Route::name('private')->group(function (){
         Route::view('/private','private')->name('private')->middleware('auth');
-        Route::get('/private', function () {
-            $results = DB::select('select * from public.posts where userid = :id',['id' => Auth::user()->id]);
-            return view('private', ['results' => $results]);
-        })->middleware('auth');
+        Route::get('/private', [\App\Http\Controllers\markController::class,'get'])->middleware('auth');
     });
     Route::get('/login', function (){
         if(Auth::check()){
@@ -34,7 +31,7 @@ Route::name('user.')->group(function (){
         }
         return view ('login');
     })->name('login');
-    Route::post('/login', [\App\Http\Controllers\login::class, 'login']);
+    Route::post('/login', [\App\Http\Controllers\auth::class, 'login']);
     Route::get('/logout', function (){
         Auth::logout();
         return redirect('login');
@@ -45,12 +42,8 @@ Route::name('user.')->group(function (){
         }
        return view('register');
     })->name('register');
-    Route::post('/register', [\App\Http\Controllers\register::class, 'save']);
-    Route::post('/posts',[\App\Http\Controllers\posts::class,'post'])->name('post');
-    Route::get('/edit', [\App\Http\Controllers\edit::class, 'edit'])->name('edit');
-    Route::get('/delete', function( Request $request){
-        $id = $request->input('id');
-        $result = DB::delete('delete from public.posts where id = '.$id);
-        return back();
-    })->name('delete');
+    Route::post('/register', [\App\Http\Controllers\auth::class, 'save']);
+    Route::post('/posts',[\App\Http\Controllers\markController::class,'post'])->name('post');
+    Route::get('/edit', [\App\Http\Controllers\markController::class, 'edit'])->name('edit');
+    Route::get('/delete', [\App\Http\Controllers\markController::class,'delete'])->name('delete');
 });

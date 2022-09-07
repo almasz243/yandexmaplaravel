@@ -4,16 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class register extends Controller
+class auth extends Controller
 {
-    public function save(Request $request){
-        if(Auth::check()){
+    public function login(Request $request){
+        if(\Illuminate\Support\Facades\Auth::check()  OR Auth::viaRemember()){
             return redirect(route('user.private'));
         }
-        if (Auth::viaRemember())
-        {
+        $formFields = $request->only(['email', 'password']);
+        $remember = $request->input('remember');
+        if(Auth::attempt($formFields,$remember)){
+            return redirect()->intended(route('user.private'));
+        }
+        return redirect(route('user.login'))->withErrors([
+            'email'=> 'Не удалось авторизироваться'
+        ]);
+    }
+    public function save(Request $request){
+        if(\Illuminate\Support\Facades\Auth::check() OR Auth::viaRemember()){
             return redirect(route('user.private'));
         }
         $validateFields = $request->validate([
@@ -31,7 +39,6 @@ class register extends Controller
             return redirect()->to(route('user.private'));
 
         }
-
         return redirect(route('user.login'))->withErrors([
             'formError' => 'Произошла ошибка при сохранении пользователя'
         ]);
